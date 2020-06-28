@@ -1,7 +1,7 @@
 package quote;
 
-import com.simen.securities.Equity;
-import com.simen.securities.EquityRepository;
+import com.simen.tradesystem.securities.Equity;
+import com.simen.tradesystem.securities.EquityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

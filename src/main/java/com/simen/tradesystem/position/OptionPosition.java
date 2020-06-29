@@ -18,9 +18,9 @@ public class OptionPosition extends BaseEntity {
     private Option option;
     private String symbol;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Cash cash;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Margin margin;
 
     protected OptionPosition() {
@@ -29,7 +29,6 @@ public class OptionPosition extends BaseEntity {
 
     public OptionPosition(int quantity, String symbol) {
         this();
-        System.out.println("SIMEN\n\n\n\n\n\n");
         this.quantity = quantity;
         this.symbol = symbol;
     }
@@ -56,14 +55,6 @@ public class OptionPosition extends BaseEntity {
 
     public void setOption(Option option) {
         this.option = option;
-    }
-
-    public void buy(int amount) {
-        this.quantity += amount;
-    }
-
-    public void sell(int amount) {
-        this.quantity -= amount;
     }
 
     public double marketValue() {

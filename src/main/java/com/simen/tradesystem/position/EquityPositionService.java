@@ -10,6 +10,8 @@ import quote.Quote;
 public class EquityPositionService {
     @Autowired
     private EquityRepository repository;
+    @Autowired
+    private EquityPositionRepository positionRepository;
 
     public double marketValue(EquityPosition position) {
         return position.getQuantity()* Quote.getStockLastPrice(position.getSymbol());
@@ -19,4 +21,24 @@ public class EquityPositionService {
         Equity equity = repository.findBySymbol(position.getSymbol());
         return marketValue(position)*equity.getMaintenanceRequirement();
     };
+
+    public void buy(int amount, EquityPosition position) {
+        int size = position.getQuantity() + amount;
+        position.setQuantity(size);
+        positionRepository.save(position);
+    }
+
+    public void sell(int amount, EquityPosition position) {
+        int size = position.getQuantity() - amount;
+        position.setQuantity(size);
+        positionRepository.save(position);
+    }
+
+    public void save(EquityPosition position) {
+        positionRepository.save(position);
+    }
+
+    public void delete(EquityPosition position) {
+        positionRepository.delete(position);
+    }
 }

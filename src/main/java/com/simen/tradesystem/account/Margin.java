@@ -14,10 +14,10 @@ import java.util.List;
 public class Margin extends BaseEntity {
     private String username;
     private double balance;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<EquityPosition> equities = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<OptionPosition> options = new ArrayList<>();
+    @OneToMany(mappedBy = "margin", cascade = CascadeType.ALL)
+    private List<EquityPosition> equities;
+    @OneToMany(mappedBy = "margin", cascade = CascadeType.ALL)
+    private List<OptionPosition> options;
 
     protected Margin() {
         super();
@@ -25,6 +25,8 @@ public class Margin extends BaseEntity {
 
     public Margin(String username) {
         this();
+        this.equities = new ArrayList<>();
+        this.options = new ArrayList<>();
         this.username = username;
     }
 
@@ -64,6 +66,5 @@ public class Margin extends BaseEntity {
     public List<OptionPosition> getOptions() {
         return options;
     }
-
 
 }

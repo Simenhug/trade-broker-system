@@ -17,9 +17,9 @@ public class EquityPosition extends BaseEntity {
     private Equity equity;
     private String symbol;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Cash cash;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Margin margin;
 
     protected EquityPosition() {

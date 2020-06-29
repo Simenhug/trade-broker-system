@@ -1,25 +1,31 @@
 package com.simen.tradesystem.account;
 
-import com.simen.tradesystem.position.EquityPosition;
-import com.simen.tradesystem.position.EquityPositionService;
-import com.simen.tradesystem.position.OptionPosition;
+import com.simen.tradesystem.position.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import quote.Quote;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+//be very careful, Margin and Position cannot both be saved to repository under any circumstances. Only save one
+//at a time. If both are saved after a change is made, will create duplicated records
+//remember when a position is created or destroyed, only to update margin.position-list, and only save the position
 @Service
 public class MarginService {
-    @Autowired
-    private EquityPositionService equityService;
+
     @Autowired
     private MarginRepository marginRepository;
+    @Autowired
+    private OptionPositionService OPservice;
+    @Autowired 
+    private EquityPositionService EPservice;
 
     public double getTotalMarketValue(Margin margin) {
         double total = 0;
         for (EquityPosition position : margin.getEquities()) {
-            total += equityService.marketValue(position);
+            total += EPservice.marketValue(position);
         }
         return total;
     }
@@ -38,22 +44,25 @@ public class MarginService {
         for (EquityPosition position : margin.getEquities()) {
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
-                position.buy(quantity);
+                EPservice.buy(quantity, position);
             }
         }
+        marginRepository.save(margin);
         if (!exist) {
             EquityPosition position = new EquityPosition(quantity, symbol);
-            margin.getEquities().add(position);
             position.setMargin(margin);
+            EPservice.save(position);
+            margin.getEquities().add(position);
         }
-        marginRepository.save(margin);
     }
 
     public void sellStock(String symbol, Integer quantity, Margin margin) throws IllegalArgumentException{
         boolean exist = false;
         List<EquityPosition> equities = margin.getEquities();
         double balance = margin.getBalance();
-        for (EquityPosition position : equities) {
+        Iterator<EquityPosition> iterator = equities.iterator();
+        while (iterator.hasNext()){
+            EquityPosition position = iterator.next();
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
                 //shorting
@@ -64,18 +73,19 @@ public class MarginService {
                         throw new IllegalArgumentException("insufficient buying power for shorting");
                     } else {
                         margin.setBalance(balance + shortValue);
-                        position.sell(quantity);
+                        EPservice.sell(quantity, position);
                     }
                 } else {
                     //closing
-                    position.sell(quantity);
+                    EPservice.sell(quantity, position);
                     margin.setBalance(balance + quantity*Quote.getStockLastPrice(symbol));
                     if (position.getQuantity() == 0) {
-                        equities.remove(position);
+                        EPservice.delete(position);
                     }
                 }
             }
         }
+        marginRepository.save(margin);
         if (!exist) {
             double shortValue = quantity*Quote.getStockLastPrice(symbol);
             if (shortValue > calculateBuyingPower(margin)) {
@@ -83,15 +93,14 @@ public class MarginService {
             } else {
                 margin.setBalance(balance - shortValue);
                 EquityPosition position = new EquityPosition((-quantity), symbol);
-                equities.add(position);
                 position.setMargin(margin);
+                EPservice.save(position);
+                margin.getEquities().add(position);
             }
         }
-        marginRepository.save(margin);
     }
 
     public void buyOption(String symbol, Integer quantity, Margin margin) {
-        System.out.println("buying options!!!\n\n\n\n\n\n\n\n\n\n\n\n");
         double buyValue = quantity*Quote.getOptionLastPrice(symbol);
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();
@@ -103,46 +112,50 @@ public class MarginService {
         for (OptionPosition position : options) {
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
-                position.buy(quantity);
+                OPservice.buy(quantity, position);
             }
         }
+        marginRepository.save(margin);
         if (!exist) {
             OptionPosition position = new OptionPosition(quantity, symbol);
-            options.add(position);
             position.setMargin(margin);
+            OPservice.save(position);
+            margin.getOptions().add(position);
         }
-        marginRepository.save(margin);
     }
 
     public void sellOption(String symbol, Integer quantity, Margin margin) {
         boolean exist = false;
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();
-        for (OptionPosition position : options) {
+        Iterator<OptionPosition> iterator = options.iterator();
+        while (iterator.hasNext()){
+            OptionPosition position = iterator.next();
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
                 if (position.getQuantity() < quantity) {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
-                    position.sell(quantity);
+                    OPservice.sell(quantity, position);
                     margin.setBalance(balance + quantity*Quote.getOptionLastPrice(symbol));
                     if (position.getQuantity() == 0) {
                         options.remove(position);
+                        OPservice.delete(position);
                     }
                 }
             }
         }
-        marginRepository.save(margin);
         //no writing options for now
         if (!exist) {
             throw new IllegalArgumentException("cannot short sell");
         }
+        marginRepository.save(margin);
     }
 
     public double calculateMaintenanceRequirement(Margin margin) {
         double totalReq = 0;
         for (EquityPosition position : margin.getEquities()) {
-            totalReq += equityService.maintenanceRequirement(position);
+            totalReq += EPservice.maintenanceRequirement(position);
         }
         return totalReq;
     }

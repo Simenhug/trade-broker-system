@@ -4,6 +4,7 @@ import com.simen.tradesystem.core.BaseEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,6 +23,7 @@ public class Equity extends BaseEntity{
 
     public Equity(String symbol, double maintenanceRequirement) {
         this();
+        this.options = new ArrayList<>();
         this.symbol = symbol;
         this.maintenanceRequirement = maintenanceRequirement;
     }

@@ -86,26 +86,37 @@ public class DatabaseLoader implements ApplicationRunner {
         users.saveAll(betaUsers);
         users.save(new User("simen", "Huang", "simen", "123456", new String[]{"ROLE_USER", "ROLE_ADMIN"}));
         Cash c = new Cash("simen");
+        Cash ca = new Cash("della");
         Margin m = new Margin("alita");
         cash.save(c);
         margin.save(m);
-        c.deposit(10000000);
+        cashService.deposit(10000000, c);
+        cashService.deposit(10000000, ca);
         cashService.buyStock("GE", 1000, c);
+        cashService.buyStock("GE", 1000, ca);
         cashService.buyStock("SPY", 1000, c);
+        cashService.sellStock("GE", 400, c);
+        cashService.sellStock("GE", 700, ca);
+        cashService.buyStock("UGAZ", 899, ca);
         cashService.buyStock("UGAZ", 1000, c);
         cashService.buyStock("GOOG", 1000, c);
+        cashService.sellStock("UGAZ", 1000, c);
+        cashService.buyStock("GE", 600, c);
         cashService.buyOption("SPY200821C0026600", 10, c);
         cashService.buyOption("SPY200821C0026600", 25, c);
+        cashService.buyOption("SPY200821C0026600", 35, ca);
+        cashService.buyOption("MSFT200717C0020000", 6, ca);
+        cashService.sellOption("SPY200821C0026600", 35, ca);
         cashService.sellOption("SPY200821C0026600", 15, c);
         cashService.buyOption("MSFT200717C0017500", 5, c);
-        m.deposit(10000000);
+        marginService.deposit(10000000, m);
         marginService.buyStock("TSLA", 2000, m);
         marginService.buyStock("AMZN", 1000, m);
         marginService.buyOption("AAPL200918P0034500", 10, m);
         marginService.buyOption("MSFT200717C0017500", 5, m);
         marginService.buyOption("AAPL200619C0034000", 15, m);
         //TODO bugs while fully closing a position. creates concurrency exceptions
-        marginService.sellOption("AAPL200619C0034000", 14, m);
+        marginService.sellOption("AAPL200619C0034000", 15, m);
         marginService.sellOption("AAPL200918P0034500", 7, m);
     }
 }

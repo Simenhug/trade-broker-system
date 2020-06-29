@@ -7,6 +7,9 @@ import com.simen.tradesystem.position.OptionPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import quote.Quote;
+
+import java.util.List;
+
 //be very careful, Cash and Position cannot both be saved to repository under any circumstances. Only save one
 //at a time. If both are saved after a change is made, will create duplicated records
 //remember when a position is created or destroyed, only to update cash.position-list, and only save the position
@@ -28,6 +31,21 @@ public class CashService {
     }
     public double getNetWorth(Cash cash){
         return cash.getBalance() + getTotalMarketValue(cash);
+    }
+
+    public void deposit(double amount, Cash cash) {
+        double balance = cash.getBalance() + amount;
+        cash.setBalance(balance);
+        cashRepository.save(cash);
+    }
+
+    public void withdraw(double amount, Cash cash) throws IllegalArgumentException{
+        if (amount > cash.getBalance()) {
+            throw new IllegalArgumentException("insufficient fund");
+        }
+        double balance = cash.getBalance() - amount;
+        cash.setBalance(balance);
+        cashRepository.save(cash);
     }
 
     public void buyStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException{
@@ -57,7 +75,8 @@ public class CashService {
     public void sellStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException{
         boolean exist = false;
         double balance = cash.getBalance();
-        for (EquityPosition position : cash.getEquities()) {
+        List<EquityPosition> equities = cash.getEquities();
+        for (EquityPosition position : equities) {
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
                 if (position.getQuantity() < quantity) {
@@ -67,7 +86,9 @@ public class CashService {
                     balance += quantity*Quote.getStockLastPrice(symbol);
                     cash.setBalance(balance);
                     if (position.getQuantity() == 0) {
+                        equities.remove(position);
                         EPservice.delete(position);
+                        break;
                     }
                 }
             }
@@ -80,7 +101,7 @@ public class CashService {
 
     public void buyOption(String symbol, Integer quantity, Cash cash) {
         double balance = cash.getBalance();
-        double buyValue = quantity*Quote.getOptionLastPrice(symbol);
+        double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
         if (buyValue > balance) {
             throw new IllegalArgumentException("insufficient cash balance");
         }
@@ -105,17 +126,20 @@ public class CashService {
     public void sellOption(String symbol, Integer quantity, Cash cash) {
         boolean exist = false;
         double balance = cash.getBalance();
-        for (OptionPosition position : cash.getOptions()) {
+        List<OptionPosition> options = cash.getOptions();
+        for (OptionPosition position : options) {
             if (position.getSymbol().equals(symbol)) {
                 exist = true;
                 if (position.getQuantity() < quantity) {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
                     OPservice.sell(quantity, position);
-                    balance += quantity*Quote.getOptionLastPrice(symbol);
+                    balance += quantity*Quote.getOptionLastPrice(symbol)*100;
                     cash.setBalance(balance);
                     if (position.getQuantity() == 0) {
                         OPservice.delete(position);
+                        options.remove(position);
+                        break;
                     }
                 }
             }

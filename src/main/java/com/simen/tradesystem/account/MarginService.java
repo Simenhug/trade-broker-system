@@ -30,6 +30,21 @@ public class MarginService {
         return total;
     }
 
+    public void deposit(double amount, Margin margin) {
+        double balance = margin.getBalance() + amount;
+        margin.setBalance(balance);
+        marginRepository.save(margin);
+    }
+
+    public void withdraw(double amount, Margin margin) throws IllegalArgumentException{
+        if (amount > calculateMarginExcess(margin)) {
+            throw new IllegalArgumentException("invalid withdraw amount. cannot withdraw more than margin excess");
+        }
+        double balance = margin.getBalance() - amount;
+        margin.setBalance(balance);
+        marginRepository.save(margin);
+    }
+
     public double getNetWorth(Margin margin){
         return margin.getBalance() + getTotalMarketValue(margin);
     }
@@ -80,7 +95,9 @@ public class MarginService {
                     EPservice.sell(quantity, position);
                     margin.setBalance(balance + quantity*Quote.getStockLastPrice(symbol));
                     if (position.getQuantity() == 0) {
+                        equities.remove(position);
                         EPservice.delete(position);
+                        break;
                     }
                 }
             }
@@ -101,7 +118,7 @@ public class MarginService {
     }
 
     public void buyOption(String symbol, Integer quantity, Margin margin) {
-        double buyValue = quantity*Quote.getOptionLastPrice(symbol);
+        double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();
         if (buyValue > balance) {
@@ -137,10 +154,11 @@ public class MarginService {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
                     OPservice.sell(quantity, position);
-                    margin.setBalance(balance + quantity*Quote.getOptionLastPrice(symbol));
+                    margin.setBalance(balance + quantity*Quote.getOptionLastPrice(symbol)*100);
                     if (position.getQuantity() == 0) {
                         options.remove(position);
                         OPservice.delete(position);
+                        break;
                     }
                 }
             }

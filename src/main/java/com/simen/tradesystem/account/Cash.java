@@ -31,14 +31,6 @@ public class Cash extends BaseEntity {
         this.username = username;
     }
 
-    public void deposit(double amount) {
-        this.balance += amount;
-    }
-
-    public void withdraw(double amount) {
-        this.balance -= amount;
-    }
-
     public double getBuyingPower() {
         return balance;
     }

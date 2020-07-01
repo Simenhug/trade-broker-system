@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("app.properties")
+@PropertySource("application.properties")
 public class DataConfig {
     @Autowired
     Environment env;

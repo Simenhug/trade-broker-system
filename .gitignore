@@ -33,3 +33,6 @@ gradle-app.setting
 
 # Properties file
 *.properties
+
+# xml configurations
+*.xml

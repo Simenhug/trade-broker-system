@@ -108,7 +108,7 @@ public class MarginService {
             if (shortValue > calculateBuyingPower(margin)) {
                 throw new IllegalArgumentException("insufficient buying power for shorting");
             } else {
-                margin.setBalance(balance - shortValue);
+                margin.setBalance(balance + shortValue);
                 EquityPosition position = new EquityPosition((-quantity), symbol);
                 position.setMargin(margin);
                 EPservice.save(position);

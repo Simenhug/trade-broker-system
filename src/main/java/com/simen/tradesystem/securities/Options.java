@@ -7,7 +7,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class Option extends BaseEntity {
+public class Options extends BaseEntity {
     @NotNull
     private String symbol;
     private Long price;
@@ -15,10 +15,10 @@ public class Option extends BaseEntity {
     private Equity UNDERLYING;
     private boolean ITM;
 
-    protected Option() {
+    protected Options() {
         super();
     }
-    public Option(String symbol, Equity underlying) {
+    public Options(String symbol, Equity underlying) {
         this();
         this.symbol = symbol;
         setUNDERLYING(underlying);

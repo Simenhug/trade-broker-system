@@ -8,10 +8,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @RepositoryRestResource
-public interface OptionRepository extends PagingAndSortingRepository<Option, Long> {
+public interface OptionRepository extends PagingAndSortingRepository<Options, Long> {
     @RestResource(rel = "symbol-is", path = "symbolEquals")
-    Option findBySymbol(@Param("symbol") String symbol);
+    Options findBySymbol(@Param("symbol") String symbol);
 
     @RestResource(rel = "symbol-contains", path = "hasSymbol")
-    Page<Option> findBySymbolContaining(@Param("symbol") String symbol, Pageable page);
+    Page<Options> findBySymbolContaining(@Param("symbol") String symbol, Pageable page);
 }

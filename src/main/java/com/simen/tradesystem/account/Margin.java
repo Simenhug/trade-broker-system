@@ -3,10 +3,9 @@ package com.simen.tradesystem.account;
 import com.simen.tradesystem.core.BaseEntity;
 import com.simen.tradesystem.position.EquityPosition;
 import com.simen.tradesystem.position.OptionPosition;
+import com.simen.tradesystem.user.User;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +17,19 @@ public class Margin extends BaseEntity {
     private List<EquityPosition> equities;
     @OneToMany(mappedBy = "margin", cascade = CascadeType.ALL)
     private List<OptionPosition> options;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "margin")
+    private User user;
 
     protected Margin() {
         super();
     }
 
-    public Margin(String username) {
+    public Margin(String username, User user) {
         this();
         this.equities = new ArrayList<>();
         this.options = new ArrayList<>();
         this.username = username;
+        this.user = user;
     }
 
     public void deposit(double amount) {
@@ -67,4 +69,11 @@ public class Margin extends BaseEntity {
         return options;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

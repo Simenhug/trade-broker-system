@@ -14,7 +14,7 @@ public class Equity extends BaseEntity{
     @NotNull
     private double price;
     @OneToMany(mappedBy = "UNDERLYING", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Option> options;
+    private List<Options> options;
     private double maintenanceRequirement;
 
     protected Equity() {
@@ -44,12 +44,12 @@ public class Equity extends BaseEntity{
         this.price = price;
     }
 
-    public List<Option> getOptions() {
+    public List<Options> getOptions() {
         return options;
     }
 
-    public void addOptions(Option option) {
-        this.options.add(option);
+    public void addOptions(Options options) {
+        this.options.add(options);
     }
 
     public double getMaintenanceRequirement() {

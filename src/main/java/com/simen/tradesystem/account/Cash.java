@@ -3,11 +3,10 @@ package com.simen.tradesystem.account;
 import com.simen.tradesystem.core.BaseEntity;
 import com.simen.tradesystem.position.EquityPosition;
 import com.simen.tradesystem.position.OptionPosition;
+import com.simen.tradesystem.user.User;
 import quote.Quote;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +18,19 @@ public class Cash extends BaseEntity {
     private List<EquityPosition> equities;
     @OneToMany(mappedBy = "cash", cascade = CascadeType.ALL)
     private List<OptionPosition> options;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "cash")
+    private User user;
 
     protected Cash() {
         super();
     }
 
-    public Cash(String username) {
+    public Cash(String username, User user) {
         this();
         this.equities = new ArrayList<>();
         this.options = new ArrayList<>();
         this.username = username;
+        this.user = user;
     }
 
     public double getBuyingPower() {
@@ -59,4 +61,11 @@ public class Cash extends BaseEntity {
         return options;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

@@ -1,12 +1,12 @@
 package com.simen.tradesystem.core;
 
 import com.simen.tradesystem.account.*;
-import com.simen.tradesystem.position.EquityPositionRepository;
-import com.simen.tradesystem.position.OptionPositionRepository;
 import com.simen.tradesystem.securities.Equity;
 import com.simen.tradesystem.securities.EquityRepository;
-import com.simen.tradesystem.securities.Option;
+import com.simen.tradesystem.securities.Options;
 import com.simen.tradesystem.securities.OptionRepository;
+import com.simen.tradesystem.user.DetailsService;
+import com.simen.tradesystem.user.Role;
 import com.simen.tradesystem.user.User;
 import com.simen.tradesystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
-@Component
+//only needs to run once.
+//@Component
 public class DatabaseLoader implements ApplicationRunner {
     private final EquityRepository equities;
     private final OptionRepository options;
@@ -26,10 +27,11 @@ public class DatabaseLoader implements ApplicationRunner {
     private final MarginService marginService;
     private final CashService cashService;
     private final UserRepository users;
+    private final DetailsService userService;
 
 
     @Autowired
-    public DatabaseLoader(EquityRepository equities, OptionRepository options, CashRepository cash, MarginRepository margin, MarginService marginService, CashService cashService, UserRepository users) {
+    public DatabaseLoader(EquityRepository equities, OptionRepository options, CashRepository cash, MarginRepository margin, MarginService marginService, CashService cashService, UserRepository users, DetailsService userService) {
         this.equities = equities;
         this.options = options;
         this.cash = cash;
@@ -37,6 +39,7 @@ public class DatabaseLoader implements ApplicationRunner {
         this.marginService = marginService;
         this.cashService = cashService;
         this.users = users;
+        this.userService = userService;
     }
 
 
@@ -57,66 +60,59 @@ public class DatabaseLoader implements ApplicationRunner {
                 new Equity("UGAZ", 1.0)
         );
         equities.saveAll(stockPool);
-        List<Option>optionPool = Arrays.asList(
-                new Option("SPY200619P0033000", equities.findBySymbol("SPY")),
-                new Option("SPY200808P0031600", equities.findBySymbol("SPY")),
-                new Option("AAPL200619C0034000", equities.findBySymbol("AAPL")),
-                new Option("AAPL200918P0034500", equities.findBySymbol("AAPL")),
-                new Option("MSFT200717C0017500", equities.findBySymbol("MSFT")),
-                new Option("MSFT200717C0020000", equities.findBySymbol("MSFT")),
-                new Option("SPY200821C0026600", equities.findBySymbol("SPY")),
-                new Option("SPY200821P0026600", equities.findBySymbol("SPY")),
-                new Option("SPY200706C0028300", equities.findBySymbol("SPY"))
+        List<Options> optionsPool = Arrays.asList(
+                new Options("SPY200619P0033000", equities.findBySymbol("SPY")),
+                new Options("SPY200808P0031600", equities.findBySymbol("SPY")),
+                new Options("AAPL200619C0034000", equities.findBySymbol("AAPL")),
+                new Options("AAPL200918P0034500", equities.findBySymbol("AAPL")),
+                new Options("MSFT200717C0017500", equities.findBySymbol("MSFT")),
+                new Options("MSFT200717C0020000", equities.findBySymbol("MSFT")),
+                new Options("SPY200821C0026600", equities.findBySymbol("SPY")),
+                new Options("SPY200821P0026600", equities.findBySymbol("SPY")),
+                new Options("SPY200706C0028300", equities.findBySymbol("SPY"))
         );
-        options.saveAll(optionPool);
-        List<User> betaUsers = Arrays.asList(
-                new User("jacobproffer", "Jacob",  "Proffer", "password", new String[] {"ROLE_USER"}),
-                new User("mlnorman", "Mike",  "Norman", "password", new String[] {"ROLE_USER"}),
-                new User("k_freemansmith", "Karen",  "Freeman-Smith", "password", new String[] {"ROLE_USER"}),
-                new User("seth_lk", "Seth",  "Kroger", "password", new String[] {"ROLE_USER"}),
-                new User("mrstreetgrid", "Java",  "Vince", "password", new String[] {"ROLE_USER"}),
-                new User("anthonymikhail", "Tony",  "Mikhail", "password", new String[] {"ROLE_USER"}),
-                new User("boog690", "AJ",  "Teacher", "password", new String[] {"ROLE_USER"}),
-                new User("faelor", "Erik",  "Faelor Shafer", "password", new String[] {"ROLE_USER"}),
-                new User("christophernowack", "Christopher",  "Nowack", "password", new String[] {"ROLE_USER"}),
-                new User("calebkleveter", "Caleb",  "Kleveter", "password", new String[] {"ROLE_USER"}),
-                new User("richdonellan", "Rich",  "Donnellan", "password", new String[] {"ROLE_USER"}),
-                new User("albertqerimi", "Albert",  "Qerimi", "password", new String[] {"ROLE_USER"})
-        );
-        users.saveAll(betaUsers);
-        users.save(new User("simen", "Huang", "simen", "123456", new String[]{"ROLE_USER", "ROLE_ADMIN"}));
-        Cash c = new Cash("simen");
-        Cash ca = new Cash("della");
-        Margin m = new Margin("alita");
-        cash.save(c);
-        margin.save(m);
-        cashService.deposit(10000000, c);
-        cashService.deposit(10000000, ca);
-        cashService.buyStock("GE", 1000, c);
-        cashService.buyStock("GE", 1000, ca);
-        cashService.buyStock("SPY", 1000, c);
-        cashService.sellStock("GE", 400, c);
-        cashService.sellStock("GE", 700, ca);
-        cashService.buyStock("UGAZ", 899, ca);
-        cashService.buyStock("UGAZ", 1000, c);
-        cashService.buyStock("GOOG", 1000, c);
-        cashService.sellStock("UGAZ", 1000, c);
-        cashService.buyStock("GE", 600, c);
-        cashService.buyOption("SPY200821C0026600", 10, c);
-        cashService.buyOption("SPY200821C0026600", 25, c);
-        cashService.buyOption("SPY200821C0026600", 35, ca);
-        cashService.buyOption("MSFT200717C0020000", 6, ca);
-        cashService.sellOption("SPY200821C0026600", 35, ca);
-        cashService.sellOption("SPY200821C0026600", 15, c);
-        cashService.buyOption("MSFT200717C0017500", 5, c);
-        marginService.deposit(10000000, m);
-        marginService.buyStock("TSLA", 2000, m);
-        marginService.buyStock("AMZN", 1000, m);
-        marginService.buyOption("AAPL200918P0034500", 10, m);
-        marginService.buyOption("MSFT200717C0017500", 5, m);
-        marginService.buyOption("AAPL200619C0034000", 15, m);
-        //TODO bugs while fully closing a position. creates concurrency exceptions
-        marginService.sellOption("AAPL200619C0034000", 15, m);
-        marginService.sellOption("AAPL200918P0034500", 7, m);
+        options.saveAll(optionsPool);
+//        List<User> betaUsers = Arrays.asList(
+//                new User("della", "della",  "huang", "password", new Role ("ROLE_USER")),
+//                new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")),
+//                new User("simen", "Huang", "simen", "123456", new Role("ROLE_ADMIN"))
+//        );
+//        users.saveAll(betaUsers);
+//        Cash simen = new Cash("simen", userService.findByUsername("simen"));
+//        Cash della = new Cash("della", userService.findByUsername("della"));
+//        Margin alita = new Margin("alita", userService.findByUsername("alita"));
+        Cash simen = new Cash("simen", new User("simen", "simen", "huang", "123456", new Role("ROLE_ADMIN")));
+        Cash della = new Cash("della", new User("della", "della",  "huang", "password", new Role ("ROLE_USER")));
+        Margin alita = new Margin("alita", new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")));
+        cash.save(simen);
+        cash.save(della);
+        margin.save(alita);
+        cashService.deposit(10000000, simen);
+        cashService.deposit(10000000, della);
+        cashService.buyStock("GE", 1000, simen);
+        cashService.buyStock("GE", 1000, della);
+        cashService.buyStock("SPY", 1000, simen);
+        cashService.sellStock("GE", 400, simen);
+        cashService.sellStock("GE", 700, della);
+        cashService.buyStock("UGAZ", 899, della);
+        cashService.buyStock("UGAZ", 1000, simen);
+        cashService.buyStock("GOOG", 1000, simen);
+        cashService.sellStock("UGAZ", 1000, simen);
+        cashService.buyStock("GE", 600, simen);
+        cashService.buyOption("SPY200821C0026600", 10, simen);
+        cashService.buyOption("SPY200821C0026600", 25, simen);
+        cashService.buyOption("SPY200821C0026600", 35, della);
+        cashService.buyOption("MSFT200717C0020000", 6, della);
+        cashService.sellOption("SPY200821C0026600", 35, della);
+        cashService.sellOption("SPY200821C0026600", 15, simen);
+        cashService.buyOption("MSFT200717C0017500", 5, simen);
+        marginService.deposit(10000000, alita);
+        marginService.buyStock("TSLA", 2000, alita);
+        marginService.buyStock("AMZN", 1000, alita);
+        marginService.buyOption("AAPL200918P0034500", 10, alita);
+        marginService.buyOption("MSFT200717C0017500", 5, alita);
+        marginService.buyOption("AAPL200619C0034000", 15, alita);
+        marginService.sellOption("AAPL200619C0034000", 15, alita);
+        marginService.sellOption("AAPL200918P0034500", 7, alita);
     }
 }

@@ -1,34 +1,55 @@
 package com.simen.tradesystem.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.simen.tradesystem.account.Cash;
+import com.simen.tradesystem.account.Margin;
 import com.simen.tradesystem.core.BaseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     private String firstname;
     private String lastname;
+    @Column(unique = true)
+    @Size(max = 20)
     private String username;
     @JsonIgnore
+    @Column(length = 100)
     private String password;
+    @Column(nullable = false)
+    private boolean enabled = true;
     @JsonIgnore
-    private String[] roles;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "role_id")
+    private Role role;
+    @OneToOne
+    private Cash cash;
+    @OneToOne
+    private Margin margin;
 
-    protected User () {
+    public User () {
         super();
     }
 
-    public User(String username, String firstname, String lastname, String password, String[] roles){
+    public User(String username, String firstname, String lastname, String password, Role role){
         this();
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         setPassword(password);
-        this.roles = roles;
+        this.enabled = true;
+        this.role = role;
     }
 
     public static PasswordEncoder getPasswordEncoder() {
@@ -55,8 +76,35 @@ public class User extends BaseEntity {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        return authorities;
     }
 
     public String getPassword() {
@@ -67,11 +115,11 @@ public class User extends BaseEntity {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
-    public String[] getRoles() {
-        return roles;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoles(String[] roles) {
-        this.roles = roles;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

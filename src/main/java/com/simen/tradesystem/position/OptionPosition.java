@@ -3,10 +3,9 @@ package com.simen.tradesystem.position;
 import com.simen.tradesystem.account.Cash;
 import com.simen.tradesystem.account.Margin;
 import com.simen.tradesystem.core.BaseEntity;
-import com.simen.tradesystem.securities.Option;
+import com.simen.tradesystem.securities.Options;
 import quote.Quote;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
@@ -15,7 +14,7 @@ public class OptionPosition extends BaseEntity {
 
     private int quantity;
     @ManyToOne
-    private Option option;
+    private Options options;
     private String symbol;
 
     @ManyToOne
@@ -49,16 +48,16 @@ public class OptionPosition extends BaseEntity {
         this.quantity = quantity;
     }
 
-    public Option getOption() {
-        return option;
+    public Options getOptions() {
+        return options;
     }
 
-    public void setOption(Option option) {
-        this.option = option;
+    public void setOptions(Options options) {
+        this.options = options;
     }
 
     public double marketValue() {
-        return quantity* Quote.getOptionLastPrice(option.getSymbol());
+        return quantity* Quote.getOptionLastPrice(options.getSymbol());
     };
 
     public Cash getCash() {

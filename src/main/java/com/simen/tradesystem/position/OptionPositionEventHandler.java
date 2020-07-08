@@ -1,6 +1,6 @@
 package com.simen.tradesystem.position;
 
-import com.simen.tradesystem.securities.Option;
+import com.simen.tradesystem.securities.Options;
 import com.simen.tradesystem.securities.OptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
@@ -21,8 +21,8 @@ public class OptionPositionEventHandler {
     @HandleBeforeCreate
     @HandleBeforeSave
     public void setEquityBasedOnSymbol(OptionPosition position) {
-        Option option = repository.findBySymbol(position.getSymbol());
-        position.setOption(option);
+        Options options = repository.findBySymbol(position.getSymbol());
+        position.setOptions(options);
         System.out.println("\n\n\n\n\n\n\nlet me know!!!!!!!!!!!!!!!!");
     }
 

@@ -1,6 +1,5 @@
 package com.simen.tradesystem.position;
 
-import com.simen.tradesystem.securities.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

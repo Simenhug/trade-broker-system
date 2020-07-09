@@ -72,18 +72,18 @@ public class DatabaseLoader implements ApplicationRunner {
                 new Options("SPY200706C0028300", equities.findBySymbol("SPY"))
         );
         options.saveAll(optionsPool);
-//        List<User> betaUsers = Arrays.asList(
-//                new User("della", "della",  "huang", "password", new Role ("ROLE_USER")),
-//                new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")),
-//                new User("simen", "Huang", "simen", "123456", new Role("ROLE_ADMIN"))
-//        );
-//        users.saveAll(betaUsers);
-//        Cash simen = new Cash("simen", userService.findByUsername("simen"));
-//        Cash della = new Cash("della", userService.findByUsername("della"));
-//        Margin alita = new Margin("alita", userService.findByUsername("alita"));
-        Cash simen = new Cash("simen", new User("simen", "simen", "huang", "123456", new Role("ROLE_ADMIN")));
-        Cash della = new Cash("della", new User("della", "della",  "huang", "password", new Role ("ROLE_USER")));
-        Margin alita = new Margin("alita", new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")));
+        List<User> betaUsers = Arrays.asList(
+                new User("della", "della",  "huang", "password", new Role ("ROLE_USER")),
+                new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")),
+                new User("simen", "Huang", "simen", "123456", new Role("ROLE_ADMIN"))
+        );
+        users.saveAll(betaUsers);
+        Cash simen = new Cash("simen", userService.findByUsername("simen"));
+        Cash della = new Cash("della", userService.findByUsername("della"));
+        Margin alita = new Margin("alita", userService.findByUsername("alita"));
+//        Cash simen = new Cash("simen", new User("simen", "simen", "huang", "123456", new Role("ROLE_ADMIN")));
+//        Cash della = new Cash("della", new User("della", "della",  "huang", "password", new Role ("ROLE_USER")));
+//        Margin alita = new Margin("alita", new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")));
         cash.save(simen);
         cash.save(della);
         margin.save(alita);

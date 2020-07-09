@@ -33,9 +33,11 @@ public class User extends BaseEntity implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private Role role;
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JoinColumn(name = "cash_id")
     private Cash cash;
-    @OneToOne
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JoinColumn(name = "margin_id")
     private Margin margin;
 
     public User () {
@@ -121,5 +123,21 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Cash getCash() {
+        return cash;
+    }
+
+    public void setCash(Cash cash) {
+        this.cash = cash;
+    }
+
+    public Margin getMargin() {
+        return margin;
+    }
+
+    public void setMargin(Margin margin) {
+        this.margin = margin;
     }
 }

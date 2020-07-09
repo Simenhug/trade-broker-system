@@ -72,7 +72,6 @@ public class LoginController {
 
     class Account{
         String type;
-
         public Account() {}
 
         //I can't have this constructor..... don't know why. If I add this, I'll get
@@ -80,7 +79,6 @@ public class LoginController {
 //        public Account(String type) {
 //            this.type = type;
 //        }
-
         public String getType() {
             return type;
         }

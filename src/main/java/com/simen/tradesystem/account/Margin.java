@@ -17,7 +17,8 @@ public class Margin extends BaseEntity {
     private List<EquityPosition> equities;
     @OneToMany(mappedBy = "margin", cascade = CascadeType.ALL)
     private List<OptionPosition> options;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "margin")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     protected Margin() {

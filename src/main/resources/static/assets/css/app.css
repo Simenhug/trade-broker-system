@@ -35,6 +35,8 @@ form.login button[type=submit], form.login button[type=submit]:hover {
 
 ul li {
     margin-bottom: 6px;
+    padding-top: 30px;
+    font-size: x-large;
 }
 
 [type="checkbox"]+label::before {
@@ -116,4 +118,15 @@ ul li {
 
 .new-item input[type=text]::-webkit-input-placeholder {
     color: rgba(131,140,199,0.4);
+}
+
+.position {
+    border-style: outset;
+    border-color: grey;
+    border-bottom-width: thin;
+    border-radius: 3px;
+}
+
+.user .logout{
+    margin-top: 0px;
 }

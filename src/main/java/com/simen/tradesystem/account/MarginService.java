@@ -1,6 +1,9 @@
 package com.simen.tradesystem.account;
 
 import com.simen.tradesystem.position.*;
+import com.simen.tradesystem.securities.EquityRepository;
+import com.simen.tradesystem.securities.OptionRepository;
+import com.simen.tradesystem.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import quote.Quote;
@@ -21,6 +24,14 @@ public class MarginService {
     private OptionPositionService OPservice;
     @Autowired 
     private EquityPositionService EPservice;
+    @Autowired
+    private EquityRepository equityRepository;
+    @Autowired
+    private OptionRepository optionRepository;
+
+    public Margin findByUser(User user) {
+        return marginRepository.findByUser(user);
+    }
 
     public double getTotalMarketValue(Margin margin) {
         double total = 0;
@@ -65,6 +76,7 @@ public class MarginService {
         marginRepository.save(margin);
         if (!exist) {
             EquityPosition position = new EquityPosition(quantity, symbol);
+            position.setEquity(equityRepository.findBySymbol(symbol));
             position.setMargin(margin);
             EPservice.save(position);
             margin.getEquities().add(position);
@@ -110,6 +122,7 @@ public class MarginService {
             } else {
                 margin.setBalance(balance + shortValue);
                 EquityPosition position = new EquityPosition((-quantity), symbol);
+                position.setEquity(equityRepository.findBySymbol(symbol));
                 position.setMargin(margin);
                 EPservice.save(position);
                 margin.getEquities().add(position);
@@ -135,6 +148,7 @@ public class MarginService {
         marginRepository.save(margin);
         if (!exist) {
             OptionPosition position = new OptionPosition(quantity, symbol);
+            position.setOptions(optionRepository.findBySymbol(symbol));
             position.setMargin(margin);
             OPservice.save(position);
             margin.getOptions().add(position);
@@ -165,7 +179,7 @@ public class MarginService {
         }
         //no writing options for now
         if (!exist) {
-            throw new IllegalArgumentException("cannot short sell");
+            throw new IllegalArgumentException("cannot short options");
         }
         marginRepository.save(margin);
     }

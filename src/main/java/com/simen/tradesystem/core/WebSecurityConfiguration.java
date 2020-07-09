@@ -30,7 +30,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //no need for security check if requesting resources under static.assets
-        web.ignoring().antMatchers("/static/**");
+        web.ignoring().antMatchers("/assets/**");
     }
 
     @Override

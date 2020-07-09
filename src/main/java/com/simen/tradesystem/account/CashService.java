@@ -4,6 +4,9 @@ import com.simen.tradesystem.position.EquityPosition;
 import com.simen.tradesystem.position.EquityPositionService;
 import com.simen.tradesystem.position.OptionPosition;
 import com.simen.tradesystem.position.OptionPositionService;
+import com.simen.tradesystem.securities.EquityRepository;
+import com.simen.tradesystem.securities.OptionRepository;
+import com.simen.tradesystem.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import quote.Quote;
@@ -21,6 +24,14 @@ public class CashService {
     private OptionPositionService OPservice;
     @Autowired
     private EquityPositionService EPservice;
+    @Autowired
+    private EquityRepository equityRepository;
+    @Autowired
+    private OptionRepository optionRepository;
+
+    public Cash findByUser(User user) {
+        return cashRepository.findByUser(user);
+    }
 
     public double getTotalMarketValue(Cash cash) {
         double total = 0;
@@ -66,6 +77,7 @@ public class CashService {
         cashRepository.save(cash);
         if (!exist) {
             EquityPosition position = new EquityPosition(quantity, symbol);
+            position.setEquity(equityRepository.findBySymbol(symbol));
             position.setCash(cash);
             EPservice.save(position);
             cash.getEquities().add(position);
@@ -117,6 +129,7 @@ public class CashService {
         cashRepository.save(cash);
         if (!exist) {
             OptionPosition position = new OptionPosition(quantity, symbol);
+            position.setOptions(optionRepository.findBySymbol(symbol));
             position.setCash(cash);
             OPservice.save(position);
             cash.getOptions().add(position);

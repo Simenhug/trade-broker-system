@@ -18,7 +18,8 @@ public class Cash extends BaseEntity {
     private List<EquityPosition> equities;
     @OneToMany(mappedBy = "cash", cascade = CascadeType.ALL)
     private List<OptionPosition> options;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "cash")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     protected Cash() {

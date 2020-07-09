@@ -6,7 +6,9 @@ import com.simen.tradesystem.core.BaseEntity;
 import com.simen.tradesystem.securities.Options;
 import quote.Quote;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('portfolio')"></head>
+<body>
+<nav th:replace="layout :: nav"></nav>
+<div th:replace="layout :: flash"></div>
+<div class="container">
+    <ul>
+        <li th:each="position : ${equities}">
+            <div class="position project-box project-link l-item">
+                <a class="name" th:href="@{|/trade/equity/${position.equity.id}|}" th:text="${position.symbol}">AAPL</a>
+            </div>
+        </li>
+        <li th:each="position : ${options}">
+            <div class="position project-box project-link l-item">
+                <a class="name" th:href="@{|/trade/option/${position.options.id}|}" th:text="${position.symbol}">SPY200808P0031600</a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div th:replace="layout :: scripts"></div>
+</body>
+</html>

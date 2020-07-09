@@ -7,13 +7,14 @@ import com.simen.tradesystem.securities.Equity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class EquityPosition extends BaseEntity {
 
     private int quantity;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Equity equity;
     private String symbol;
 

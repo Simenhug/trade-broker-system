@@ -14,7 +14,7 @@
                     <form th:action="@{/signup}" th:object="${user}" method="post" class="login">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <!-- so this is how you pass a default value into a hidden field!!! -->
-                        <input type="hidden" th:attr="name=role" th:value="ROLE_USER">
+<!--                        <input type="hidden" th:attr="name=role" th:value="ROLE_USER">-->
                         <div class="row">
                             <div class="col s12">
                                 <input th:field="*{firstname}" placeholder="firstname"/>

@@ -1,23 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="layout :: head('portfolio')"></head>
+<head th:replace="layout :: head('portfolio')">
+</head>
 <body>
 <nav th:replace="layout :: nav"></nav>
 <div th:replace="layout :: flash"></div>
 <div class="container">
     <ul>
+        <li>
+            <div class="position project-box project-link l-item">
+                <span class="symbol">symbol</span>
+                <span class="quantity">quantity</span>
+                <span class="last-price">last price</span>
+                <span class="market-value">market value</span>
+            </div>
+        </li>
         <li th:each="position : ${equities}">
             <div class="position project-box project-link l-item">
-                <a class="name" th:href="@{|/trade/equity/${position.equity.id}|}" th:text="${position.symbol}">AAPL</a>
+                <span class="symbol">
+                    <a class="name" name="symbol" th:href="@{|/trade/equity/${position.equity.id}|}" th:text="${position.symbol}">AAPL</a>
+                </span>
+                <span class="quantity" th:text="${position.quantity}">quantity</span>
+                <span class="last-price" name="price" th:text="${position.quantity}">last price</span>
+                <span class="market-value" th:text="${position.quantity}">market value</span>
             </div>
         </li>
         <li th:each="position : ${options}">
             <div class="position project-box project-link l-item">
-                <a class="name" th:href="@{|/trade/option/${position.options.id}|}" th:text="${position.symbol}">SPY200808P0031600</a>
+                <span class="symbol">
+                    <a class="name option-symbol" name="symbol" th:href="@{|/trade/option/${position.options.id}|}" th:text="${position.symbol}">SPY200808P0031600</a>
+                </span>
+                <span class="quantity" th:text="${position.quantity}">quantity</span>
+                <span class="last-price" name="price" th:text="${position.quantity}">last price</span>
+                <span class="market-value" th:text="${position.quantity}">market value</span>
             </div>
         </li>
     </ul>
 </div>
 <div th:replace="layout :: scripts"></div>
+<script th:src="@{/assets/js/quote.js}"></script>
 </body>
 </html>

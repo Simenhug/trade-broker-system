@@ -5,7 +5,7 @@ import com.simen.tradesystem.core.BaseEntity;
 import javax.persistence.Entity;
 
 @Entity
-public class Role extends BaseEntity {
+public class Role extends BaseEntity{
     private String name;
 
     public Role() {}

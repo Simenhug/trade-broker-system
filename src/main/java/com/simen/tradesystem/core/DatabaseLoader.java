@@ -5,10 +5,7 @@ import com.simen.tradesystem.securities.Equity;
 import com.simen.tradesystem.securities.EquityRepository;
 import com.simen.tradesystem.securities.Options;
 import com.simen.tradesystem.securities.OptionRepository;
-import com.simen.tradesystem.user.DetailsService;
-import com.simen.tradesystem.user.Role;
-import com.simen.tradesystem.user.User;
-import com.simen.tradesystem.user.UserRepository;
+import com.simen.tradesystem.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -28,10 +25,11 @@ public class DatabaseLoader implements ApplicationRunner {
     private final CashService cashService;
     private final UserRepository users;
     private final DetailsService userService;
+    private final RoleRepository roleRepository;
 
 
     @Autowired
-    public DatabaseLoader(EquityRepository equities, OptionRepository options, CashRepository cash, MarginRepository margin, MarginService marginService, CashService cashService, UserRepository users, DetailsService userService) {
+    public DatabaseLoader(EquityRepository equities, OptionRepository options, CashRepository cash, MarginRepository margin, MarginService marginService, CashService cashService, UserRepository users, DetailsService userService, RoleRepository roleRepository) {
         this.equities = equities;
         this.options = options;
         this.cash = cash;
@@ -40,6 +38,7 @@ public class DatabaseLoader implements ApplicationRunner {
         this.cashService = cashService;
         this.users = users;
         this.userService = userService;
+        this.roleRepository = roleRepository;
     }
 
 
@@ -72,10 +71,14 @@ public class DatabaseLoader implements ApplicationRunner {
                 new Options("SPY200706C0028300", equities.findBySymbol("SPY"))
         );
         options.saveAll(optionsPool);
+        roleRepository.save(new Role("ROLE_USER"));
+        roleRepository.save(new Role("ROLE_ADMIN"));
+        Role role_user = roleRepository.findByName("ROLE_USER");
+        Role role_admin = roleRepository.findByName("ROLE_ADMIN");
         List<User> betaUsers = Arrays.asList(
-                new User("della", "della",  "huang", "password", new Role ("ROLE_USER")),
-                new User("alita", "alita",  "battleangel", "password", new Role ("ROLE_USER")),
-                new User("simen", "Huang", "simen", "123456", new Role("ROLE_ADMIN"))
+                new User("della", "della",  "huang", "password", role_user),
+                new User("alita", "alita",  "battleangel", "password", role_user),
+                new User("simen", "Huang", "simen", "123456", role_admin)
         );
         users.saveAll(betaUsers);
         Cash simen = new Cash("simen", userService.findByUsername("simen"));

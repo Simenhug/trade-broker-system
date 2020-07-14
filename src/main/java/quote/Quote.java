@@ -5,6 +5,7 @@ import com.simen.tradesystem.securities.EquityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -45,12 +46,14 @@ public class Quote {
     public static Double getStockLastPrice(String symbol) throws IllegalArgumentException{
         Double basePrice = stockPool.get(symbol);
         if (symbol == null) {
-            throw new IllegalArgumentException("symbol not found in stock poo;");
+            throw new IllegalArgumentException("symbol not found in stock pool;");
         }
         Random random = new Random();
         Double delta = random.nextDouble();
-        Double lastPrice = basePrice + (0.5 - delta)*10;
-        return lastPrice;
+        Double lastPrice = basePrice + (0.5 - delta)*basePrice*0.1;
+        //limit the price to 2 decimal places
+        Double answer = Double.valueOf(new DecimalFormat("#.##").format(lastPrice));
+        return answer;
     }
 
     public static Double getOptionLastPrice(String symbol) throws IllegalArgumentException {
@@ -60,8 +63,10 @@ public class Quote {
         }
         Random random = new Random();
         Double delta = random.nextDouble();
-        Double lastPrice = basePrice + (0.5 - delta)*10;
-        return lastPrice;
+        Double lastPrice = basePrice + (0.5 - delta)*basePrice*0.1;
+        //limit the price to 2 decimal places
+        Double answer = Double.valueOf(new DecimalFormat("#.##").format(lastPrice));
+        return answer;
     }
 
     public void changeMaintenanceRequirement(String symbol, double requirement) {

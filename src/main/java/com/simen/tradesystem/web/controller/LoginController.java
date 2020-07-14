@@ -1,6 +1,7 @@
 package com.simen.tradesystem.web.controller;
 
 import com.simen.tradesystem.account.*;
+import com.simen.tradesystem.user.RoleRepository;
 import com.simen.tradesystem.user.User;
 import com.simen.tradesystem.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class LoginController {
 
     @Autowired
     private MarginRepository marginRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @RequestMapping(path = "/login", method = RequestMethod.GET)
     public String loginForm(Model model, HttpServletRequest request) {
@@ -54,6 +58,7 @@ public class LoginController {
 
     @RequestMapping(path = "/signup", method = RequestMethod.POST)
     public String createAccount(@ModelAttribute User user, @ModelAttribute Account account) {
+        user.setRole(roleRepository.findByName("ROLE_USER"));
         users.save(user);
         if (account.type.equals("margin")) {
             Margin margin = new Margin(user.getUsername(), user);

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="layout :: head('portfolio')">
+</head>
+<body>
+<nav th:replace="layout :: nav"></nav>
+<div th:replace="layout :: flash"></div>
+<!--//TODO   options estimate amount incorrect-->
+<div class="container">
+    <form th:action="@{|/trade/${product}/${symbol}|}" method="post">
+<!--        <input type="hidden" th:field="*{id}"/>-->
+        <div class="row">
+            <div class="col s12">
+                <h2 style="color:black;" id="symbol" th:text="${symbol}">Symbol</h2>
+                <h4 id="price" style="color:black;" th:text="${price}">Price</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 l8">
+                <label style="font-size:150%">Quantity</label>
+                <input id="quantity" style="width: 200px; display: block;" type="number" step="1" pattern="\d+" name="quantity" placeholder="0" onfocusout="quantityChanged()"/>
+            </div>
+        </div>
+<!--        choose buy/sell side-->
+        <div class="row">
+            <div class="col s12 l8">
+                <div class="botton-group" data-toggle="buttons">
+                    <label class="btn btn-primary active" id="BUY" style="color:black; background-color:transparent;"/>
+                        <input type="radio" name="side" value="BUY" onclick="buy()"/> BUY
+                    </label>
+                    <label class="btn btn-primary" id="SELL" style="color:black; background-color:transparent;"/>
+                        <input type="radio" name="side" value="SELL" onclick="sell()"/> SELL
+                    </label>
+                    <script>
+                        function buy() {
+                            var sell = document.getElementById('SELL');
+                            document.getElementById('BUY').style.backgroundColor = 'lime';
+                            if (sell.style.backgroundColor == 'red') {
+                                sell.style.backgroundColor = 'white';
+                            }
+                        }
+                        function sell() {
+                            var buy = document.getElementById('BUY');
+                            document.getElementById('SELL').style.backgroundColor = 'red';
+                            if (buy.style.backgroundColor == 'lime') {
+                                buy.style.backgroundColor = 'white';
+                            }
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12" style="color:black;">
+                <p>Estimate Amount</p>
+                <p id="estimate-amount">0</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <button type="submit" class="button">place order</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <a href="javascript:window.location = document.referrer;" class="button">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:replace="layout :: scripts"></div>
+<script>
+function updateLastPriceAndEstimateAmount() {
+  var symbol = document.getElementById('symbol').innerHTML;
+  var multiplier = 1;
+  //for options
+  if (symbol.length>5) multiplier = 100;
+  var quantity = document.getElementById('quantity').value;
+  var xhttp;
+  xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+
+      //updates price field
+      document.getElementById('price').innerHTML = this.responseText;
+      //updates estimate order amount field, round to 2 decimal places
+      document.getElementById('estimate-amount').innerHTML = (parseFloat(this.responseText) * parseInt(quantity)*multiplier).toFixed(2);
+      //convert "NaN" to 0
+      var amount = document.getElementById('estimate-amount').innerHTML;
+      if (isNaN(amount)) document.getElementById('estimate-amount').innerHTML = 0;
+    }
+  };
+  xhttp.open("GET", `/quote?symbol=${symbol}`, true);
+  xhttp.send();
+}
+
+function quantityChanged() {
+  var symbol = document.getElementById('symbol').innerHTML;
+  var multiplier = 1;
+  //for options
+  if (symbol.length>5) multiplier = 100;
+  var price = document.getElementById('price').innerHTML;
+  var quantity = document.getElementById('quantity').value;
+  document.getElementById('estimate-amount').innerHTML = (parseFloat(price) * parseInt(quantity)*multiplier).toFixed(2);
+  console.log(price);
+  console.log(quantity);
+  console.log(document.getElementById('estimate-amount').innerHTML);
+}
+
+//continuously update stock price. run updateAllPositions every 3 seconds
+setInterval(updateLastPriceAndEstimateAmount, 3000);
+window.onload = updateLastPriceAndEstimateAmount;
+</script>
+</body>
+</html>

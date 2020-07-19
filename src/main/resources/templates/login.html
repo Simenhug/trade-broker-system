@@ -2,12 +2,16 @@
 <html lang="en">
 <head th:replace="layout :: head('login')"></head>
 <body>
+<p>
+    don't have an account? <a href="/signup">sign up</a>
+</p>
 <div class="container">
     <div class="row">
         <div class="col s12 m6 offset-m3">
             <div class="card">
+                <h5 style="text-align: center; color: black; font-size: 30px;">Welcome to Simen's Trade Simulator</h5>
                 <div class="card-image">
-                    <img th:src="@{/assets/images/desktop-computer.svg}" alt="desktop computer" />
+                    <img th:src="@{/assets/images/Stock-Trading-App-Development.jpg}" alt="desktop computer" />
                 </div>
                 <div class="card-content">
                     <div th:replace="layout :: flash"></div>

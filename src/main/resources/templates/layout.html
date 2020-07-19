@@ -3,7 +3,10 @@
 <head th:fragment="head(page_title)" lang="en">
     <meta charset="UTF-8"/>
     <meta description="viewport" content="width=device-width, initial-scale=1"/>
-
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <!-- ... -->
     <link rel="stylesheet" th:href="@{/assets/css/web.css}"/>
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css"/>
@@ -33,7 +36,7 @@
         <div class="col s12">
             <form th:action="@{/search}" method="get">
                 <div class="input-field">
-                    <input name="q" type="search" placeholder="Search all gifs..." required="required" autocomplete="off"/>
+                    <input name="q" type="search" placeholder="What do you want to trade?" required="required" autocomplete="off"/>
                     <i class="material-icons">search</i>
                 </div>
             </form>
@@ -47,9 +50,11 @@
     </div>
 </div>
 <div th:fragment="scripts">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<!--    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/jquery.cookie.js}"></script>
 </div>
 </body>
 </html>

@@ -53,6 +53,7 @@ public class Quote {
         Double lastPrice = basePrice + (0.5 - delta)*basePrice*0.1;
         //limit the price to 2 decimal places
         Double answer = Double.valueOf(new DecimalFormat("#.##").format(lastPrice));
+//        System.out.println("\n\n\n\n\n\n\n\n\n" + answer + "\n\n\n\n\n\n\n\n\n\n\n\n");
         return answer;
     }
 

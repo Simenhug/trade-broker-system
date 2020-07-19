@@ -26,12 +26,17 @@ function updateAllPositions() {
     return null;
   }
   var i = 1;
+  var totalMV = 0;
   for( i; i<priceFields.length; i++){
     //calls server side /quote service using the symbol from innerText. Once get a 200 response, update the price field and market value
     updateLastPriceAndMarketValue(`/quote?symbol=${symbolFields[i].innerText}`, priceFields[i], MVFields[i], parseInt(quantityFields[i].innerHTML));
+    totalMV += parseFloat(MVFields[i].innerHTML);
   }
+  document.getElementById("total-mv").innerHTML = totalMV.toFixed(2);
+  var balance = parseFloat(document.getElementById("balance").innerHTML);
+  document.getElementById("net-equity").innerHTML = (totalMV + balance).toFixed(2);
 }
 
 //continuously update stock price. run updateAllPositions every 3 seconds
 setInterval(updateAllPositions, 3000);
-
+window.onload = updateAllPositions;

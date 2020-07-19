@@ -38,7 +38,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/signup*").permitAll()
-                //any request must be authenticated (logged in)
+//                    .antMatchers("/search*").permitAll()
+//                any request must be authenticated (logged in)
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()

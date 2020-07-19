@@ -75,6 +75,10 @@ ul li {
     background: transparent;
 }
 
+.btn .btn-primary{
+    background: transparent;
+}
+
 .new-item label {
     position: relative;
     font-size: 2rem;
@@ -159,5 +163,46 @@ ul li {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
+}
 
+.col {
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.search-bar .col {
+    padding: 0;
+}
+
+.search-bar .input-field {
+    background-color: #f7f5fa;
+}
+
+.search-bar .input-field {
+    border: 1px solid #dad7de;
+    border-radius: 4px;
+}
+
+.search-bar .input-field input {
+    border: none;
+    margin: 0;
+    padding-left: 1rem;
+    font-size: 1.1rem;
+}
+
+.search-bar .input-field input:focus {
+    background-color: transparent;
+}
+
+.search-bar .input-field input ~ .material-icons, .search-bar .input-field input:focus ~ .material-icons {
+    top: 0.5rem;
+    color: #896bb3;
+}
+
+::-webkit-input-placeholder {
+    color: #a29fa6;
+}
+
+.search-bar .input-field input, .search-bar .input-field input:focus {
+    color: #757378;
 }

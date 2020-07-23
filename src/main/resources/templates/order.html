@@ -15,12 +15,6 @@
                 <h4 id="price" style="color:black;" th:text="${price}">Price</h4>
             </div>
         </div>
-        <div class="row">
-            <div class="col s12 l8">
-                <label style="font-size:150%">Quantity</label>
-                <input id="quantity" style="width: 200px; display: block;" type="number" step="1" pattern="\d+" name="quantity" placeholder="0" onfocusout="quantityChanged()"/>
-            </div>
-        </div>
 <!--        choose buy/sell side-->
         <div class="row">
             <div class="col s12 l8">
@@ -48,6 +42,12 @@
                         }
                     </script>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12 l8">
+                <label style="font-size:150%">Quantity</label>
+                <input id="quantity" style="width: 200px; display: block;" type="number" step="1" pattern="\d+" name="quantity" placeholder="0" onfocusout="quantityChanged()"/>
             </div>
         </div>
         <div class="row">

@@ -36,3 +36,7 @@ gradle-app.setting
 
 # xml configurations
 *.xml
+
+# node js modules
+node_modules
+.DS_Store

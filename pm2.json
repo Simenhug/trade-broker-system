@@ -1,0 +1,12 @@
+{
+  "name": "trade-simulator",
+  "script": "/usr/bin/java",
+  "args": [
+    "-jar",
+    "build/libs/trading-system-1.0-SNAPSHOT.jar"
+  ],
+  "exec_interpreter": "",
+  "exec_mode": "fork",
+  "error_file" : "/home/ubuntu/log/trade-simulator-err.log",
+  "out_file"   : "/home/ubuntu/log/trade-simulator-out.log"
+}

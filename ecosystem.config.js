@@ -11,7 +11,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'git@github.com:Simenhug/trade-broker-system.git',
       path: '/home/ubuntu/Codes/trade_simulator',
-      'post-deploy': 'npm install && pm2 startOrRestart pm2.json'
+      'post-deploy': 'npm install && pm2 startOrRestart ecosystem.config.js'
     }
   }
 }

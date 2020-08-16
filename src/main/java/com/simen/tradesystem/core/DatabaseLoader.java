@@ -60,15 +60,10 @@ public class DatabaseLoader implements ApplicationRunner {
         );
         equities.saveAll(stockPool);
         List<Options> optionsPool = Arrays.asList(
-                new Options("SPY200619P0033000", equities.findBySymbol("SPY")),
-                new Options("SPY200808P0031600", equities.findBySymbol("SPY")),
-                new Options("AAPL200619C0034000", equities.findBySymbol("AAPL")),
-                new Options("AAPL200918P0034500", equities.findBySymbol("AAPL")),
-                new Options("MSFT200717C0017500", equities.findBySymbol("MSFT")),
-                new Options("MSFT200717C0020000", equities.findBySymbol("MSFT")),
-                new Options("SPY200821C0026600", equities.findBySymbol("SPY")),
-                new Options("SPY200821P0026600", equities.findBySymbol("SPY")),
-                new Options("SPY200706C0028300", equities.findBySymbol("SPY"))
+                new Options("SPY200808P00316000", equities.findBySymbol("SPY")),
+                new Options("AAPL200918P00345000", equities.findBySymbol("AAPL")),
+                new Options("SPY200821C00266000", equities.findBySymbol("SPY")),
+                new Options("SPY200821P00266000", equities.findBySymbol("SPY"))
         );
         options.saveAll(optionsPool);
         roleRepository.save(new Role("ROLE_USER"));
@@ -102,20 +97,8 @@ public class DatabaseLoader implements ApplicationRunner {
         cashService.buyStock("GOOG", 1000, simen);
         cashService.sellStock("UGAZ", 1000, simen);
         cashService.buyStock("GE", 600, simen);
-        cashService.buyOption("SPY200821C0026600", 10, simen);
-        cashService.buyOption("SPY200821C0026600", 25, simen);
-        cashService.buyOption("SPY200821C0026600", 35, della);
-        cashService.buyOption("MSFT200717C0020000", 6, della);
-        cashService.sellOption("SPY200821C0026600", 35, della);
-        cashService.sellOption("SPY200821C0026600", 15, simen);
-        cashService.buyOption("MSFT200717C0017500", 5, simen);
         marginService.deposit(10000000, alita);
         marginService.buyStock("TSLA", 2000, alita);
         marginService.buyStock("AMZN", 1000, alita);
-        marginService.buyOption("AAPL200918P0034500", 10, alita);
-        marginService.buyOption("MSFT200717C0017500", 5, alita);
-        marginService.buyOption("AAPL200619C0034000", 15, alita);
-        marginService.sellOption("AAPL200619C0034000", 15, alita);
-        marginService.sellOption("AAPL200918P0034500", 7, alita);
     }
 }

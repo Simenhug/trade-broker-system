@@ -1,5 +1,5 @@
 
-function updateLastPriceAndMarketValue(url, priceElement, marketValueElement, quantity) {
+function updateLastPriceAndMarketValue(url, multiplier, priceElement, marketValueElement, quantity) {
   var xhttp;
   xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -8,7 +8,7 @@ function updateLastPriceAndMarketValue(url, priceElement, marketValueElement, qu
       //updates price field
       priceElement.innerHTML = this.responseText;
       //updates market value field, round to 2 decimal places
-      marketValueElement.innerHTML = (parseFloat(this.responseText) * quantity).toFixed(2);
+      marketValueElement.innerHTML = (parseFloat(this.responseText) * quantity * multiplier).toFixed(2);
     }
   };
   xhttp.open("GET", url, true);
@@ -27,9 +27,13 @@ function updateAllPositions() {
   }
   var i = 1;
   var totalMV = 0;
+  var multiplier = 1;
+  //for options
   for( i; i<priceFields.length; i++){
     //calls server side /quote service using the symbol from innerText. Once get a 200 response, update the price field and market value
-    updateLastPriceAndMarketValue(`/quote?symbol=${symbolFields[i].innerText}`, priceFields[i], MVFields[i], parseInt(quantityFields[i].innerHTML));
+    var symbol = symbolFields[i].innerText;
+    if (symbol.length>5) multiplier = 100;
+    updateLastPriceAndMarketValue(`/quote?symbol=${symbol}`, multiplier, priceFields[i], MVFields[i], parseInt(quantityFields[i].innerHTML));
     totalMV += parseFloat(MVFields[i].innerHTML);
   }
   document.getElementById("total-mv").innerHTML = totalMV.toFixed(2);

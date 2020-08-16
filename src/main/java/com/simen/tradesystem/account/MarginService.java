@@ -1,8 +1,10 @@
 package com.simen.tradesystem.account;
 
 import com.simen.tradesystem.position.*;
+import com.simen.tradesystem.securities.Equity;
 import com.simen.tradesystem.securities.EquityRepository;
 import com.simen.tradesystem.securities.OptionRepository;
+import com.simen.tradesystem.securities.Options;
 import com.simen.tradesystem.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +62,31 @@ public class MarginService {
         return margin.getBalance() + getTotalMarketValue(margin);
     }
 
+    public void addToStockPool(String symbol) {
+        if (equityRepository.findBySymbol(symbol) == null) {
+            double maint = 0;
+            Double price = Quote.getStockLastPrice(symbol);
+            if (price < 2.99) {
+                maint = 1;
+            } else if (price < 4.99) {
+                maint = 0.5;
+            } else {
+                maint = 0.25;
+            }
+            equityRepository.save(new Equity(symbol, maint));
+        }
+    }
+
+    public void addToOptionPool(String symbol) {
+        //make sure stock is in stock pool first
+        String stock = symbol.split("[0-9]")[0];
+        addToStockPool(stock);
+        if (optionRepository.findBySymbol(symbol) == null) {
+            optionRepository.save(new Options(symbol, equityRepository.findBySymbol(stock)));
+        }
+    }
     public void buyStock(String symbol, Integer quantity, Margin margin) throws IllegalArgumentException{
+        addToStockPool(symbol);
         double buyValue = quantity* Quote.getStockLastPrice(symbol);
         if (buyValue > calculateBuyingPower(margin)) {
             throw new IllegalArgumentException("insufficient buying power");
@@ -84,6 +110,7 @@ public class MarginService {
     }
 
     public void sellStock(String symbol, Integer quantity, Margin margin) throws IllegalArgumentException{
+        addToStockPool(symbol);
         boolean exist = false;
         List<EquityPosition> equities = margin.getEquities();
         double balance = margin.getBalance();
@@ -131,6 +158,7 @@ public class MarginService {
     }
 
     public void buyOption(String symbol, Integer quantity, Margin margin) {
+        addToOptionPool(symbol);
         double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();
@@ -156,6 +184,7 @@ public class MarginService {
     }
 
     public void sellOption(String symbol, Integer quantity, Margin margin) {
+        addToOptionPool(symbol);
         boolean exist = false;
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();

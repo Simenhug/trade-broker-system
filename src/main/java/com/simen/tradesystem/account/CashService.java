@@ -4,13 +4,16 @@ import com.simen.tradesystem.position.EquityPosition;
 import com.simen.tradesystem.position.EquityPositionService;
 import com.simen.tradesystem.position.OptionPosition;
 import com.simen.tradesystem.position.OptionPositionService;
+import com.simen.tradesystem.securities.Equity;
 import com.simen.tradesystem.securities.EquityRepository;
 import com.simen.tradesystem.securities.OptionRepository;
+import com.simen.tradesystem.securities.Options;
 import com.simen.tradesystem.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import quote.Quote;
 
+import java.io.IOException;
 import java.util.List;
 
 //be very careful, Cash and Position cannot both be saved to repository under any circumstances. Only save one
@@ -59,7 +62,33 @@ public class CashService {
         cashRepository.save(cash);
     }
 
-    public void buyStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException{
+    public void addToStockPool(String symbol) {
+        if (equityRepository.findBySymbol(symbol) == null) {
+            double maint = 0;
+            Double price = Quote.getStockLastPrice(symbol);
+            if (price < 2.99) {
+                maint = 1;
+            } else if (price < 4.99) {
+                maint = 0.5;
+            } else {
+                maint = 0.25;
+            }
+            equityRepository.save(new Equity(symbol, maint));
+        }
+    }
+
+    public void addToOptionPool(String symbol) {
+        //make sure stock is in stock pool first
+        String stock = symbol.split("[0-9]")[0];
+        addToStockPool(stock);
+        if (optionRepository.findBySymbol(symbol) == null) {
+            optionRepository.save(new Options(symbol, equityRepository.findBySymbol(stock)));
+        }
+    }
+
+
+    public void buyStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException {
+        addToStockPool(symbol);
         double buyValue = quantity* Quote.getStockLastPrice(symbol);
         double balance = cash.getBalance();
         if (buyValue > balance) {
@@ -85,6 +114,7 @@ public class CashService {
     }
 
     public void sellStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException{
+        addToStockPool(symbol);
         boolean exist = false;
         double balance = cash.getBalance();
         List<EquityPosition> equities = cash.getEquities();
@@ -112,6 +142,7 @@ public class CashService {
     }
 
     public void buyOption(String symbol, Integer quantity, Cash cash) {
+        addToOptionPool(symbol);
         double balance = cash.getBalance();
         double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
         if (buyValue > balance) {
@@ -137,6 +168,7 @@ public class CashService {
     }
 
     public void sellOption(String symbol, Integer quantity, Cash cash) {
+        addToStockPool(symbol);
         boolean exist = false;
         double balance = cash.getBalance();
         List<OptionPosition> options = cash.getOptions();

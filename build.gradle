@@ -3,25 +3,25 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
     id 'base'
-    id 'com.palantir.docker' version '0.22.1'
-    id 'com.palantir.docker-run' version '0.22.1'
-    id 'pl.allegro.tech.build.axion-release' version '1.10.1'
+//    id 'com.palantir.docker' version '0.22.1'
+//    id 'com.palantir.docker-run' version '0.22.1'
+//    id 'pl.allegro.tech.build.axion-release' version '1.10.1'
 }
 
-project.version = scmVersion.version
+//project.version = scmVersion.version
 
-docker {
-    name "${project.name}:${project.version}"
-    files "plugins.txt"
-}
-
-dockerRun {
-    name "${project.name}"
-    image "${project.name}:${project.version}"
-    ports '8080:8080'
-    clean true
-    daemonize false
-}
+//docker {
+//    name "${project.name}:${project.version}"
+//    files "plugins.txt"
+//}
+//
+//dockerRun {
+//    name "${project.name}"
+//    image "${project.name}:${project.version}"
+//    ports '8080:8080'
+//    clean true
+//    daemonize false
+//}
 
 group 'com.simen'
 version '1.0-SNAPSHOT'

@@ -6,7 +6,11 @@ function updateLastPriceAndMarketValue(url, multiplier, priceElement, marketValu
     if (this.readyState == 4 && this.status == 200) {
 
       //updates price field
+      var oldPrice = priceElement.innerHTML;
       priceElement.innerHTML = this.responseText;
+      if (priceElement.innerHTML == '0.00'){
+        priceElement.innerHTML == oldPrice;
+      }
       //updates market value field, round to 2 decimal places
       marketValueElement.innerHTML = (parseFloat(this.responseText) * quantity * multiplier).toFixed(2);
     }

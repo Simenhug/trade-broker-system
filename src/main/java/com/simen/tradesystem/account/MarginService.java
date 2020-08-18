@@ -87,7 +87,13 @@ public class MarginService {
     }
     public void buyStock(String symbol, Integer quantity, Margin margin) throws IllegalArgumentException{
         addToStockPool(symbol);
-        double buyValue = quantity* Quote.getStockLastPrice(symbol);
+        double price = 0.00;
+        try {
+            price = Quote.getStockLastPrice(symbol);
+        } catch (IllegalArgumentException e) {
+            price = 0.00;
+        }
+        double buyValue = quantity * price;
         if (buyValue > calculateBuyingPower(margin)) {
             throw new IllegalArgumentException("insufficient buying power");
         }
@@ -122,7 +128,13 @@ public class MarginService {
                 //shorting
                 if (position.getQuantity() < quantity) {
                     int shortAmt = position.getQuantity() - quantity;
-                    double shortValue = shortAmt*Quote.getStockLastPrice(symbol);
+                    double price = 0.00;
+                    try {
+                        price = Quote.getStockLastPrice(symbol);
+                    } catch (IllegalArgumentException e) {
+                        price = 0.00;
+                    }
+                    double shortValue = shortAmt*price;
                     if (shortValue > calculateBuyingPower(margin)) {
                         throw new IllegalArgumentException("insufficient buying power for shorting");
                     } else {
@@ -159,7 +171,13 @@ public class MarginService {
 
     public void buyOption(String symbol, Integer quantity, Margin margin) {
         addToOptionPool(symbol);
-        double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
+        double price = 0.00;
+        try {
+            price = Quote.getOptionLastPrice(symbol);
+        } catch (IllegalArgumentException e) {
+            price = 0.00;
+        }
+        double buyValue = quantity*price*100;
         List<OptionPosition> options = margin.getOptions();
         double balance = margin.getBalance();
         if (buyValue > balance) {
@@ -197,7 +215,13 @@ public class MarginService {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
                     OPservice.sell(quantity, position);
-                    margin.setBalance(balance + quantity*Quote.getOptionLastPrice(symbol)*100);
+                    double price = 0.00;
+                    try {
+                        price = Quote.getOptionLastPrice(symbol);
+                    } catch (IllegalArgumentException e) {
+                        price = 0.00;
+                    }
+                    margin.setBalance(balance + quantity*price*100);
                     if (position.getQuantity() == 0) {
                         options.remove(position);
                         OPservice.delete(position);

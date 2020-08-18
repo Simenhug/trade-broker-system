@@ -89,7 +89,13 @@ public class CashService {
 
     public void buyStock(String symbol, Integer quantity, Cash cash) throws IllegalArgumentException {
         addToStockPool(symbol);
-        double buyValue = quantity* Quote.getStockLastPrice(symbol);
+        double price = 0.00;
+        try {
+            price = Quote.getStockLastPrice(symbol);
+        } catch (IllegalArgumentException e) {
+            price = 0.00;
+        }
+        double buyValue = quantity* price;
         double balance = cash.getBalance();
         if (buyValue > balance) {
             throw new IllegalArgumentException("insufficient cash balance");
@@ -125,7 +131,13 @@ public class CashService {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
                     EPservice.sell(quantity, position);
-                    balance += quantity*Quote.getStockLastPrice(symbol);
+                    double price = 0.00;
+                    try {
+                        price = Quote.getStockLastPrice(symbol);
+                    } catch (IllegalArgumentException e) {
+                        price = 0.00;
+                    }
+                    balance += quantity*price;
                     cash.setBalance(balance);
                     if (position.getQuantity() == 0) {
                         equities.remove(position);
@@ -144,7 +156,13 @@ public class CashService {
     public void buyOption(String symbol, Integer quantity, Cash cash) {
         addToOptionPool(symbol);
         double balance = cash.getBalance();
-        double buyValue = quantity*Quote.getOptionLastPrice(symbol)*100;
+        double price = 0.00;
+        try {
+            price = Quote.getOptionLastPrice(symbol);
+        } catch (IllegalArgumentException e) {
+            price = 0.00;
+        }
+        double buyValue = quantity*price*100;
         if (buyValue > balance) {
             throw new IllegalArgumentException("insufficient cash balance");
         }
@@ -179,7 +197,13 @@ public class CashService {
                     throw new IllegalArgumentException("insufficient position. cannot short sell");
                 } else {
                     OPservice.sell(quantity, position);
-                    balance += quantity*Quote.getOptionLastPrice(symbol)*100;
+                    double price = 0.00;
+                    try {
+                        price = Quote.getOptionLastPrice(symbol);
+                    } catch (IllegalArgumentException e) {
+                        price = 0.00;
+                    }
+                    balance += quantity*price*100;
                     cash.setBalance(balance);
                     if (position.getQuantity() == 0) {
                         OPservice.delete(position);

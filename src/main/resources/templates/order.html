@@ -82,7 +82,12 @@ function updateLastPriceAndEstimateAmount() {
     if (this.readyState == 4 && this.status == 200) {
 
       //updates price field
-      document.getElementById('price').innerHTML = this.responseText;
+      var oldPrice = document.getElementById('price').innerHTML;
+      var newPrice = this.responseText;
+      if (newPrice == '0.00'){
+        newPrice == oldPrice;
+       }
+      document.getElementById('price').innerHTML = newPrice;
       //updates estimate order amount field, round to 2 decimal places
       document.getElementById('estimate-amount').innerHTML = (parseFloat(this.responseText) * parseInt(quantity)*multiplier).toFixed(2);
       //convert "NaN" to 0

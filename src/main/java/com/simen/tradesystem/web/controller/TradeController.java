@@ -78,10 +78,14 @@ public class TradeController {
     @ResponseBody
     public Double lastPrice(@RequestParam("symbol") String symbol) {
         String query = symbol.replaceAll("[^A-Za-z0-9]+", "").toUpperCase();
-        if (symbol.length() <= 5) {
-            return Quote.getStockLastPrice(query);
-        } else {
-            return Quote.getOptionLastPrice(query);
+        try {
+            if (symbol.length() <= 5) {
+                return Quote.getStockLastPrice(query);
+            } else {
+                return Quote.getOptionLastPrice(query);
+            }
+        } catch (IllegalArgumentException e) {
+            return 0.00;
         }
     }
 
@@ -89,12 +93,23 @@ public class TradeController {
     @RequestMapping("/search")
     public String formNewOrder(@RequestParam String q, Model model) {
         String query = q.replaceAll("[^A-Za-z0-9]+", "").toUpperCase();
+        double price = 0.00;
         if (query.length() <= 5) {
             model.addAttribute("product", "equity");
-            model.addAttribute(Quote.getStockLastPrice(query));
+            try {
+                price = Quote.getStockLastPrice(query);
+            } catch (IllegalArgumentException e) {
+                price = 0.00;
+            }
+            model.addAttribute(price);
         } else {
             model.addAttribute("product", "option");
-            model.addAttribute(Quote.getOptionLastPrice(query));
+            try {
+                price = Quote.getOptionLastPrice(query);
+            } catch (IllegalArgumentException e) {
+                price = 0.00;
+            }
+            model.addAttribute(price);
         }
         model.addAttribute("symbol", query);
         return "order";
@@ -104,12 +119,23 @@ public class TradeController {
     @RequestMapping("/orderForm/{symbol}")
     public String newOrderForm(@PathVariable String symbol, Model model) {
         String query = symbol.replaceAll("[^A-Za-z0-9]+", "").toUpperCase();
+        double price = 0.00;
         if (query.length() <= 5) {
             model.addAttribute("product", "equity");
-            model.addAttribute(Quote.getStockLastPrice(query));
+            try {
+                price = Quote.getStockLastPrice(query);
+            } catch (IllegalArgumentException e) {
+                price = 0.00;
+            }
+            model.addAttribute(price);
         } else {
             model.addAttribute("product", "option");
-            model.addAttribute(Quote.getOptionLastPrice(query));
+            try {
+                price = Quote.getOptionLastPrice(query);
+            } catch (IllegalArgumentException e) {
+                price = 0.00;
+            }
+            model.addAttribute(price);
         }
         model.addAttribute("symbol", query);
         return "order";

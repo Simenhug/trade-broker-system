@@ -97,7 +97,7 @@ public class Quote {
         String url = String.format("http://finance.yahoo.com/quote/%s?p=%s&.tsrc=fin-srch", symbol, symbol);
         Document doc  = null;
         try {
-            doc = Jsoup.connect(url).userAgent(ua).timeout(10*1000).get();
+            doc = Jsoup.connect(url).userAgent(ua).timeout(30*1000).get();
         } catch (IOException e) {
             throw new IllegalArgumentException("symbol not found in option pool;");
         }

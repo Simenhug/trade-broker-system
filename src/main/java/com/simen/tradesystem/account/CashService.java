@@ -65,7 +65,13 @@ public class CashService {
     public void addToStockPool(String symbol) {
         if (equityRepository.findBySymbol(symbol) == null) {
             double maint = 0;
-            Double price = Quote.getStockLastPrice(symbol);
+            Double price;
+            try {
+                price = Quote.getStockLastPrice(symbol);
+            } catch (IllegalArgumentException e) {
+                equityRepository.save(new Equity(symbol, 0.25));
+                return;
+            }
             if (price < 2.99) {
                 maint = 1;
             } else if (price < 4.99) {

@@ -4,10 +4,12 @@ import com.simen.tradesystem.account.*;
 import com.simen.tradesystem.position.*;
 import com.simen.tradesystem.user.DetailsService;
 import com.simen.tradesystem.user.User;
+import com.simen.tradesystem.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import quote.Quote;
 
 import java.io.IOException;
@@ -91,7 +93,30 @@ public class TradeController {
 
     // Search symbols to trade
     @RequestMapping("/search")
-    public String formNewOrder(@RequestParam String q, Model model) {
+    public String formNewOrder(@RequestParam String q, Model model, RedirectAttributes redirectAttributes) {
+        boolean invalidSymbol = false;
+        if (q.length() <= 5) {
+            // format check for stock symbols
+            if (!q.matches("[A-Za-z]+")) {
+                invalidSymbol = true;
+            }
+        } else {
+            // format check for option symbols
+            // must follow OCC option symbol format
+            if (!q.matches("[A-Za-z]{1,5}[0-9]{6}[C|P][0-9]{8}")) {
+                invalidSymbol = true;
+            }
+        }
+        if (invalidSymbol) {
+            redirectAttributes.addFlashAttribute("flash", new FlashMessage(
+                    String.format("invalid symbol format! %n" +
+                    "hint: for options symbols, please follow the OCC option symbol format. %n" +
+                    "Root symbol of the underlying stock or ETF + Expiration date, 6 digits in the format yymmdd + %n" +
+                    "Option type, either P or C, for put or call + Strike price, as the price x 1000, front padded with 0s to 8 digits. %n" +
+                    "For example, LAMR150117C00052500 represents a call on LAMR, expiring on 1/17/2015, with a strike price of $52.50."),
+                    FlashMessage.Status.FAILURE));
+            return "redirect:/";
+        }
         String query = q.replaceAll("[^A-Za-z0-9]+", "").toUpperCase();
         double price = 0.00;
         if (query.length() <= 5) {

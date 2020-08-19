@@ -65,7 +65,13 @@ public class MarginService {
     public void addToStockPool(String symbol) {
         if (equityRepository.findBySymbol(symbol) == null) {
             double maint = 0;
-            Double price = Quote.getStockLastPrice(symbol);
+            Double price;
+            try {
+                price = Quote.getStockLastPrice(symbol);
+            } catch (IllegalArgumentException e) {
+                equityRepository.save(new Equity(symbol, 0.25));
+                return;
+            }
             if (price < 2.99) {
                 maint = 1;
             } else if (price < 4.99) {
@@ -121,6 +127,12 @@ public class MarginService {
         List<EquityPosition> equities = margin.getEquities();
         double balance = margin.getBalance();
         Iterator<EquityPosition> iterator = equities.iterator();
+        double price = 0.00;
+        try {
+            price = Quote.getStockLastPrice(symbol);
+        } catch (IllegalArgumentException e) {
+            price = 0.00;
+        }
         while (iterator.hasNext()){
             EquityPosition position = iterator.next();
             if (position.getSymbol().equals(symbol)) {
@@ -128,12 +140,6 @@ public class MarginService {
                 //shorting
                 if (position.getQuantity() < quantity) {
                     int shortAmt = position.getQuantity() - quantity;
-                    double price = 0.00;
-                    try {
-                        price = Quote.getStockLastPrice(symbol);
-                    } catch (IllegalArgumentException e) {
-                        price = 0.00;
-                    }
                     double shortValue = shortAmt*price;
                     if (shortValue > calculateBuyingPower(margin)) {
                         throw new IllegalArgumentException("insufficient buying power for shorting");
@@ -144,7 +150,7 @@ public class MarginService {
                 } else {
                     //closing
                     EPservice.sell(quantity, position);
-                    margin.setBalance(balance + quantity*Quote.getStockLastPrice(symbol));
+                    margin.setBalance(balance + quantity*price);
                     if (position.getQuantity() == 0) {
                         equities.remove(position);
                         EPservice.delete(position);
@@ -155,7 +161,7 @@ public class MarginService {
         }
         marginRepository.save(margin);
         if (!exist) {
-            double shortValue = quantity*Quote.getStockLastPrice(symbol);
+            double shortValue = quantity*price;
             if (shortValue > calculateBuyingPower(margin)) {
                 throw new IllegalArgumentException("insufficient buying power for shorting");
             } else {

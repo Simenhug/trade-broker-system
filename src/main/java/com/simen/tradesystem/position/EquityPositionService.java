@@ -14,7 +14,11 @@ public class EquityPositionService {
     private EquityPositionRepository positionRepository;
 
     public double marketValue(EquityPosition position) {
-        return position.getQuantity()* Quote.getStockLastPrice(position.getSymbol());
+        try {
+            return position.getQuantity() * Quote.getStockLastPrice(position.getSymbol());
+        } catch (IllegalArgumentException e) {
+            return 0.00;
+        }
     };
 
     public double maintenanceRequirement(EquityPosition position) {

@@ -63,7 +63,6 @@ public class Quote {
     public static Double getStockLastPrice(String symbol) {
         String baseUrl = "http://finance.yahoo.com/q?s=";
         String ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36";
-
         String url = baseUrl + symbol;
         Document doc  = null;
         try {

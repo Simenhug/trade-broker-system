@@ -1,4 +1,4 @@
-##Simen's Trade Simulator
+## Simen's Trade Simulator
 
 Simen's Trade Simulator is a simple virtual trading platform for U.S. market stocks, ETFs, and options.
 
@@ -11,13 +11,13 @@ visit http://virtualtradeground.com/login
 you can open an account [here](http://virtualtradeground.com/signup).
 
 ----
-###Notes
+### Notes
 * you can choose a Cash or a Margin account. Margin account has leveraged buying power, while a cash account's buying power is limited to its balacne
 * your account balance, total market value, and net equity is calculated real-time, below your positions.
 * if you want to search an option symbol, your input must follow the OCC options symbol format, without any spaces in the middle
 
 
-###[The OCC Option Symbol](https://en.wikipedia.org/wiki/Option_symbol)
+### [The OCC Option Symbol](https://en.wikipedia.org/wiki/Option_symbol)
 
 The OCC option symbol consists of four parts:
 

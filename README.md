@@ -28,10 +28,10 @@ The OCC option symbol consists of four parts:
 
 Examples:
 
-`SPX   141122P00019500`
+`SPX141122P00019500`
 
 The above symbol represents a put on SPX, expiring on 11/22/2014, with a strike price of $19.50.
 
-`LAMR  150117C00052500`
+`LAMR150117C00052500`
 
 The above symbol represents a call on LAMR, expiring on 1/17/2015, with a strike price of $52.50.
